@@ -17,6 +17,7 @@ from store_stackjoin import *
 from get_tweet_to_reply_to import *
 import time
 from remove_mentions_from_tweet_message import *
+import random
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -54,13 +55,12 @@ def get_stream(set):
             json_response = json.loads(response_line)
             print(f"\n\n\n\n\n--- --- --- INCOMING TWEET --- --- ---\n")
             print(f"the json dumps for json_response {json.dumps(json_response,indent=4)}\n\n")
-            # checking if it's a stackjoin to store it
-            # if "#stackjoin" in json_response['data']['text'].lower() and "#stackjoinadd" not in json_response['data']['text'].lower():
-            #     print("found #stackjoin on tweet, activating store_stackjoin function")
-            #     store_stackjoin(json_response,tweet_datetimeISO=None)
-            # else:
-            #     print("didn't find #stackjoin on tweet, so not activating the store_stackjoin function")
+            
+            oof_phrase_list = ["oof, BIG OOF", "ooooooooof", "ooooof", "BIG OOF", "OOOooOOoOooF", "oof...", "big, big oof"]
+            oof = random.choice(oof_phrase_list)
+
             tweet_id = json_response["data"]["id"]
+
             data_from_tweet_to_reply_to = get_tweet_to_reply_to(tweet_id)
             if data_from_tweet_to_reply_to != None:
                 author_id_tweet_to_reply_to = data_from_tweet_to_reply_to[2]
@@ -68,19 +68,19 @@ def get_stream(set):
                 tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
                 tweet_message = tweet_message.upper()
-                tweet_message += "?!\n\noof, BIG OOF"
+                tweet_message += "?!\n\n"+oof
             else:
                 author_id_tweet_to_reply_to = json_response["data"]["author_id"]
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
-                tweet_message += "?!\n\noof, BIG OOF"
+                tweet_message += "?!\n\n"+oof
             if author_id_tweet_to_reply_to == "1602113748839317512":
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
-                tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\noof, BIG OOF"
-            throttle_list = create_throttle_list(throttle_time)
+                tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
+                
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
             # processing tweet message
             if tweet_message[len(tweet_message)-1:len(tweet_message)] == ".":
@@ -99,6 +99,8 @@ def get_stream(set):
             # tweet_message = "Acknowledged by Stackchain bot ✅ (proof of concept)"
             # tweet_message = get_tweet_message(json_response, tweet_message)
             print(tweet_message)
+
+            throttle_list = create_throttle_list(throttle_time)
 
             tweet_y = False
             tweet_n = False
