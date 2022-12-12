@@ -62,14 +62,15 @@ def get_stream(set):
             #     print("didn't find #stackjoin on tweet, so not activating the store_stackjoin function")
             tweet_id = json_response["data"]["id"]
             data_from_tweet_to_reply_to = get_tweet_to_reply_to(tweet_id)
-            author_id_tweet_to_reply_to = data_from_tweet_to_reply_to[2]
             if data_from_tweet_to_reply_to != None:
+                author_id_tweet_to_reply_to = data_from_tweet_to_reply_to[2]
                 tweet_id_to_reply_to = data_from_tweet_to_reply_to[1]
                 tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
                 tweet_message = tweet_message.upper()
                 tweet_message += "?!\n\noof, BIG OOF"
             else:
+                author_id_tweet_to_reply_to = json_response["data"]["author_id"]
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
