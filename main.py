@@ -68,23 +68,21 @@ def get_stream(set):
                 tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
                 tweet_message = tweet_message.upper()
-                tweet_message += "?!\n\n"+oof
             else:
                 author_id_tweet_to_reply_to = json_response["data"]["author_id"]
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
-                tweet_message += "?!\n\n"+oof
             if author_id_tweet_to_reply_to == "1602113748839317512":
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
-                tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
-                
+            if tweet_message[len(tweet_message)-1:len(tweet_message)] == ".":
+                tweet_message = tweet_message[:len(tweet_message)-1]            
+            tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
+
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
             # processing tweet message
-            if tweet_message[len(tweet_message)-1:len(tweet_message)] == ".":
-                tweet_message = tweet_message[:len(tweet_message)-1]
             # tweet_message = json_response["data"]["text"]
             # if tweet_message.strip()[0:len(tweet_message)-9] == (tweet_message.strip()[0:tweet_message.lower().find("fewbot21")-8]):
             #     tweet_message = "Few"
