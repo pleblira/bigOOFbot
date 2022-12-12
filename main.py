@@ -14,8 +14,9 @@ from get_exclude_reply_user_ids import *
 from tweepy_send_tweet import *
 from get_tweet_message import *
 from store_stackjoin import *
-from stackjoin_add import *
+from get_tweet_to_reply_to import *
 import time
+from remove_mentions_from_tweet_message import *
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -60,28 +61,45 @@ def get_stream(set):
             # else:
             #     print("didn't find #stackjoin on tweet, so not activating the store_stackjoin function")
             tweet_id = json_response["data"]["id"]
+            data_from_tweet_to_reply_to = get_tweet_to_reply_to(tweet_id)
+            author_id_tweet_to_reply_to = data_from_tweet_to_reply_to[2]
+            if data_from_tweet_to_reply_to != None:
+                tweet_id_to_reply_to = data_from_tweet_to_reply_to[1]
+                tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
+                tweet_message = remove_mentions_from_tweet_message(tweet_message)
+                tweet_message = tweet_message.upper()
+                tweet_message += "?!\n\noof, BIG OOF"
+            else:
+                tweet_id_to_reply_to = tweet_id
+                tweet_message = json_response["data"]["text"]
+                tweet_message = remove_mentions_from_tweet_message(tweet_message)
+                tweet_message += "?!\n\noof, BIG OOF"
+            if author_id_tweet_to_reply_to == "1602113748839317512":
+                tweet_id_to_reply_to = tweet_id
+                tweet_message = json_response["data"]["text"]
+                tweet_message = remove_mentions_from_tweet_message(tweet_message)
+                tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\noof, BIG OOF"
             # if "#stackjoinadd" in json_response['data']['text'].lower():
             #     print("found #stackjoinadd on tweet, activating stackjoin_add function")
-            #     json_response_from_stackjoinadd = stackjoin_add(tweet_id)
             #     if json_response_from_stackjoinadd != None:
             #         store_stackjoin(json_response_from_stackjoinadd[0],json_response_from_stackjoinadd[1],json_response_from_stackjoinadd[2], json_response_from_stackjoinadd[3])
             # else:
             #     print("didn't find #stackjoinadd on tweet, so not activating the stackjoin_add function")
             throttle_list = create_throttle_list(throttle_time)
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
-            tweet_message = json_response["data"]["text"]
-            if tweet_message.strip()[0:len(tweet_message)-9] == (tweet_message.strip()[0:tweet_message.lower().find("@fewbot21")-8]):
-                tweet_message = "Few"
-            else:
-                tweet_message = tweet_message[tweet_message.lower().find("@fewbot21")+10:]
-                replace_dictionary = {"?":"",",":"",":":"","!":"","you":"I",".":""}
-                for element_to_replace in replace_dictionary:
-                    tweet_message = tweet_message.replace(element_to_replace,replace_dictionary[element_to_replace])
-                tweet_message = tweet_message.strip() + "?\n\nFew"
+            # tweet_message = json_response["data"]["text"]
+            # if tweet_message.strip()[0:len(tweet_message)-9] == (tweet_message.strip()[0:tweet_message.lower().find("fewbot21")-8]):
+            #     tweet_message = "Few"
+            # else:
+            # tweet_message = tweet_message[tweet_message.lower().find("fewbot21")+10:]
+            # replace_dictionary = {"?":"",",":"",":":"","!":"","you":"I",".":""}
+            # for element_to_replace in replace_dictionary:
+                # tweet_message = tweet_message.replace(element_to_replace,replace_dictionary[element_to_replace])
+            # tweet_message = tweet_message.strip() + "?\n\nFew"
             # Making all replies "Few" or something else
-            # tweet_message = "Few"
+            # tweet_message = "oof"
             # tweet_message = "Acknowledged by Stackchain bot ✅ (proof of concept)"
-            tweet_message = get_tweet_message(json_response, tweet_message)
+            # tweet_message = get_tweet_message(json_response, tweet_message)
             print(tweet_message)
 
             tweet_y = False
@@ -89,9 +107,9 @@ def get_stream(set):
 
             while not tweet_y and not tweet_n:
                 # additional check for hashtag on text of the tweet (the API has been serving replies to the actual hashtag tweet, which does not apply)
-                if "#stackchain" not in json_response['data']['text'].lower() and "#stackchaintip" not in json_response['data']['text'].lower() and "#stackjoin" not in json_response['data']['text'].lower() and "#pbstack" not in json_response['data']['text'].lower() and "#stackjoinadd" not in json_response['data']['text'].lower():
-                    print("switching tweet_n to True since text doesn't contain hashtags")
-                    tweet_n = True
+                # if "#stackchain" not in json_response['data']['text'].lower() and "#stackchaintip" not in json_response['data']['text'].lower() and "#stackjoin" not in json_response['data']['text'].lower() and "#pbstack" not in json_response['data']['text'].lower() and "#stackjoinadd" not in json_response['data']['text'].lower():
+                #     print("switching tweet_n to True since text doesn't contain hashtags")
+                #     tweet_n = True
                 for throttle_item in throttle_list:
                     print(f"\nthis is an item from throttle_list: {throttle_item}")
                     if json_response['data']['author_id'] in throttle_item:
@@ -108,11 +126,7 @@ def get_stream(set):
                 print(f"tweet_y: {tweet_y}, tweet_n: {tweet_n}")
                 print("\n")
             if tweet_y == True:
-                if "#stackjoin" in json_response['data']['text'].lower():
-                    print("tweet will go out")
-                    tweepy_send_tweet(tweet_message, tweet_id, json_response)
-                print("tweet replies for hashtags besides #stackjoin and #stackjoinadd have been disabled for now")
-                # tweepy_send_tweet(tweet_message,tweet_id, json_response)
+                tweepy_send_tweet(tweet_message,tweet_id_to_reply_to, json_response)
                 clean_up_and_save_recent_interactions(json_response, throttle_time)
             else:
                 print("tweet won't go out and cleaning up recent interactions was skipped")

@@ -4,8 +4,7 @@ import json
 
 def set_rules(bearer_oauth):
     sample_rules = [
-        {"value": "((#stackchain OR #stackchaintip OR #stackjoin OR #pbstack OR #stackjoinadd) -from:stackchainsiggy -is:retweet)"},
-        # {"value": "(@fewBOT21 -from:fewBOT21 -is:retweet)"},
+        {"value": "(@bigoofbot -from:bigoofbot -is:retweet)"},
     ]
     payload = {"add": sample_rules}
     print(f"payload is {payload}\n\n")

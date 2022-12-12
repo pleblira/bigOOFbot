@@ -54,41 +54,34 @@ def connect_to_endpoint(url):
     return response.json()
 
 
-def stackjoin_add(tweet_id):
+def get_tweet_to_reply_to(tweet_id):
     url = create_url(tweet_id)
     json_response_from_reply = connect_to_endpoint(url)
-    for user in json_response_from_reply['includes']['users']:
-        if user['id'] == json_response_from_reply['data'][0]['author_id']:
-            stackjoinadd_reporter = " [stackjoinadd_reporter: "
-            stackjoinadd_reporter += user['username']
-            stackjoinadd_reporter += " - ID "+user['id']
-    tweet_id_to_stackjoinadd = "1110302988"
-    # print(json.dumps(json_response_from_reply, indent=4, sort_keys=True))
-    stackjoinadd_tweet_message = " - message: "
-    stackjoinadd_tweet_message += remove_mentions_from_tweet_message(json_response_from_reply['data'][0]['text'])
+    tweet_id_to_reply_to = "1110302988"
     # print(stackjoinadd_tweet_message)
     # print(json_response_from_reply['data'][0]['referenced_tweets'][0]['id'])
     if 'referenced_tweets' not in json_response_from_reply['data'][0]:
         return None
     for item in json_response_from_reply['data'][0]['referenced_tweets']:
         if item['type'] == "replied_to":
-            tweet_id_to_stackjoinadd = item['id']
+            tweet_id_to_reply_to = item['id']
     # webbrowser.open('https://twitter.com/halfin/status/'+tweet_id_to_add_to_mempool)
     # return gif_url
-    json_response_from_tweet_to_stackjoinadd = connect_to_endpoint(create_url(tweet_id_to_stackjoinadd))
+    json_response_from_tweet_to_reply_to = connect_to_endpoint(create_url(tweet_id_to_reply_to))
+    author_id_tweet_to_reply_to = json_response_from_tweet_to_reply_to['data'][0]['author_id']
+    print(f"the json dumps from get tweet to reply to is: \n{json.dumps(json_response_from_tweet_to_reply_to, indent=4, sort_keys=True)}")
     # print(json.dumps(json_response_from_tweet_to_stackjoinadd, indent=4, sort_keys=True))
     # print("\n\n\n")
-    rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function = {}
-    rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function['data'] = json_response_from_tweet_to_stackjoinadd['data'][0]
-    rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function['includes'] = json_response_from_tweet_to_stackjoinadd['includes']
+    rebuilding_dict_to_make_it_compatible_with_main = {}
+    rebuilding_dict_to_make_it_compatible_with_main['data'] = json_response_from_tweet_to_reply_to['data'][0]
+    rebuilding_dict_to_make_it_compatible_with_main['includes'] = json_response_from_tweet_to_reply_to['includes']
     # print(json.dumps(rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function, indent=4, sort_keys=True))
     # print(json.dumps(json_response_from_tweet_to_stackjoinadd, indent=4, sort_keys=True))
-    tweet_datetimeISO = rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function['data']['created_at']
-    tweet_datetimeISO = tweet_datetimeISO[0:tweet_datetimeISO.find(".")]
-    print (stackjoinadd_reporter)
-    return rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function, tweet_datetimeISO, stackjoinadd_reporter, stackjoinadd_tweet_message
+    # tweet_datetimeISO = rebuilding_dict_to_make_it_compatible_with_store_stackjoin_function['data']['created_at']
+    # tweet_datetimeISO = tweet_datetimeISO[0:tweet_datetimeISO.find(".")]
+    return rebuilding_dict_to_make_it_compatible_with_main, tweet_id_to_reply_to, author_id_tweet_to_reply_to
 
 if __name__ == "__main__":
-    stackjoin_add("1600692890807971840")
+    get_tweet_to_reply_to("1600692890807971840")
     # stackjoin_add("1598477437813260288")
 
