@@ -74,9 +74,11 @@ def get_tweet_to_reply_to(tweet_id):
     # print("\n\n\n")
     # checking if bigOOFbot is mentioned in the reply to tweet
     contains_bigoofbot_on_tweet_to_reply_to_mentions = False
-    for item in json_response_from_reply['data'][0]['mentions']:
-        if item['id'] == "1602113748839317512":
-            contains_bigoofbot_on_tweet_to_reply_to_mentions = True
+    if "entities" in json_response_from_tweet_to_reply_to['data'][0]:
+        if "mentions" in json_response_from_tweet_to_reply_to['data'][0]['entities']:
+            for item in json_response_from_tweet_to_reply_to['data'][0]['entities']['mentions']:
+                if item['id'] == "1602113748839317512":
+                    contains_bigoofbot_on_tweet_to_reply_to_mentions = True
     rebuilding_dict_to_make_it_compatible_with_main = {}
     rebuilding_dict_to_make_it_compatible_with_main['data'] = json_response_from_tweet_to_reply_to['data'][0]
     rebuilding_dict_to_make_it_compatible_with_main['includes'] = json_response_from_tweet_to_reply_to['includes']

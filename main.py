@@ -70,7 +70,7 @@ def get_stream(set):
                 tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
                 tweet_message = tweet_message.upper()
-            # this is in case the bot is called on a new tweet that isn't a reply
+            # this is in case the bot is called on a new tweet that isn't a reply originally
             else:
                 author_id_tweet_to_reply_to = json_response["data"]["author_id"]
                 tweet_id_to_reply_to = tweet_id
@@ -81,6 +81,11 @@ def get_stream(set):
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
+            # stripping http code that's added to tweet message when there's an image
+            if "https://t.co/" in tweet_message[tweet_message.rfind(" "):].lower():
+                print("found http on tweet message")
+                tweet_message = tweet_message[:tweet_message.rfind(" ")]
+            # removing last period of mentioned tweet
             if tweet_message[len(tweet_message)-1:len(tweet_message)] == ".":
                 tweet_message = tweet_message[:len(tweet_message)-1]            
             tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
@@ -113,6 +118,7 @@ def get_stream(set):
                 #     print("switching tweet_n to True since text doesn't contain hashtags")
                 #     tweet_n = True
                 if data_from_tweet_to_reply_to[3] == True:
+                    print("the tweet is a reply to a tweet that previously mentioned the bot, so setting tweet_n to True")
                     tweet_n = True
                 for throttle_item in throttle_list:
                     print(f"\nthis is an item from throttle_list: {throttle_item}")
