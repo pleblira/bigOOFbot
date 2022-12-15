@@ -112,6 +112,8 @@ def get_stream(set):
                 # if "#stackchain" not in json_response['data']['text'].lower() and "#stackchaintip" not in json_response['data']['text'].lower() and "#stackjoin" not in json_response['data']['text'].lower() and "#pbstack" not in json_response['data']['text'].lower() and "#stackjoinadd" not in json_response['data']['text'].lower():
                 #     print("switching tweet_n to True since text doesn't contain hashtags")
                 #     tweet_n = True
+                if data_from_tweet_to_reply_to[3] == True:
+                    tweet_n = True
                 for throttle_item in throttle_list:
                     print(f"\nthis is an item from throttle_list: {throttle_item}")
                     if json_response['data']['author_id'] in throttle_item:
