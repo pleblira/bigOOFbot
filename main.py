@@ -64,15 +64,19 @@ def get_stream(set):
             data_from_tweet_to_reply_to = get_tweet_to_reply_to(tweet_id)
             if data_from_tweet_to_reply_to != None:
                 author_id_tweet_to_reply_to = data_from_tweet_to_reply_to[2]
-                tweet_id_to_reply_to = data_from_tweet_to_reply_to[1]
+                # replying to person that quoted the bot and not directly to the mentioned tweet as it didn't make much sense to have a call to a bot just hanging in the tweet without the bot responding
+                # tweet_id_to_reply_to = data_from_tweet_to_reply_to[1]
+                tweet_id_to_reply_to = tweet_id
                 tweet_message = data_from_tweet_to_reply_to[0]["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
                 tweet_message = tweet_message.upper()
+            # this is in case the bot is called on a new tweet that isn't a reply
             else:
                 author_id_tweet_to_reply_to = json_response["data"]["author_id"]
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
+            # checking if it's a reply to a bigOOFbot tweet
             if author_id_tweet_to_reply_to == "1602113748839317512":
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
