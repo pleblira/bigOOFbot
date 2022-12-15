@@ -81,6 +81,12 @@ def get_stream(set):
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
+            # checking if bot is mentioned later in the late to reply even if part of a thread
+            bigoofbot_mentioned_in_tweet_message = False
+            if "@bigoofbot" in remove_mentions_from_tweet_message(json_response["data"]["text"]).lower():
+                bigoofbot_mentioned_in_tweet_message = True
+                tweet_message = json_response["data"]["text"]
+                tweet_message = remove_mentions_from_tweet_message(tweet_message)
             # stripping http code that's added to tweet message when there's an image
             if "https://t.co/" in tweet_message[tweet_message.rfind(" "):].lower():
                 print("found http on tweet message")
@@ -90,9 +96,6 @@ def get_stream(set):
                 tweet_message = tweet_message[:len(tweet_message)-1]            
             tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
 
-            bigoofbot_mentioned_in_tweet_message = False
-            if "@bigoofbot" in tweet_message.lower():
-                bigoofbot_mentioned_in_tweet_message == True
 
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
             # processing tweet message
