@@ -55,8 +55,9 @@ def get_stream(set):
             json_response = json.loads(response_line)
             print(f"\n\n\n\n\n--- --- --- INCOMING TWEET --- --- ---\n")
             print(f"the json dumps for json_response {json.dumps(json_response,indent=4)}\n\n")
+            print(f"this is the text we're analyzing: {remove_mentions_from_tweet_message(json_response['data']['text']).lower()}")
             
-            oof_phrase_list = ["oof, BIG OOF", "ooooooooof", "ooooof", "BIG OOF", "OOOooOOoOooF", "oof...", "big, big oof"]
+            oof_phrase_list = ["oof, BIG OOF", "ooooooooof", "ooooof", "BIG OOF", "OOOooOOoOooF", "oof...", "big, big oof", "ooOoooOOoOOOOF","OOOOOOOOooooooooOOOOOOOOOf"]
             oof = random.choice(oof_phrase_list)
 
             tweet_id = json_response["data"]["id"]
@@ -81,12 +82,14 @@ def get_stream(set):
                 tweet_id_to_reply_to = tweet_id
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
-            # checking if bot is mentioned later in the late to reply even if part of a thread
+            # checking if bot is mentioned later in the late to reply even if part of a thread so tweet goes out
             bigoofbot_mentioned_in_tweet_message = False
-            if "@bigoofbot" in remove_mentions_from_tweet_message(json_response["data"]["text"]).lower():
+            if "@bigoofbot" in remove_mentions_from_tweet_message(json_response["data"]["text"]).lower() and data_from_tweet_to_reply_to[3] == True:
+                print('found bigoofbot')
                 bigoofbot_mentioned_in_tweet_message = True
                 tweet_message = json_response["data"]["text"]
                 tweet_message = remove_mentions_from_tweet_message(tweet_message)
+                tweet_message = tweet_message.upper().replace(" @BIGOOFBOT","")
             # stripping http code that's added to tweet message when there's an image
             if "https://t.co/" in tweet_message[tweet_message.rfind(" "):].lower():
                 print("found http on tweet message")
@@ -95,7 +98,6 @@ def get_stream(set):
             if tweet_message[len(tweet_message)-1:len(tweet_message)] == ".":
                 tweet_message = tweet_message[:len(tweet_message)-1]            
             tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
-
 
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
             # processing tweet message

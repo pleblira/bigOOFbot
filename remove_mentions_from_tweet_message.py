@@ -8,6 +8,7 @@ def remove_mentions_from_tweet_message(tweet_message):
     if slices[0][0] != "@":
         end_of_mentions_index = 0
     else:
+        end_of_mentions_index = len(tweet_message)
         for index,slice in enumerate(slices):
             if slice[0] == " ":
                 if slice[1] == "@":

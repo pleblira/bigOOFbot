@@ -65,6 +65,8 @@ def get_tweet_to_reply_to(tweet_id):
     for item in json_response_from_reply['data'][0]['referenced_tweets']:
         if item['type'] == "replied_to":
             tweet_id_to_reply_to = item['id']
+    
+    
     # webbrowser.open('https://twitter.com/halfin/status/'+tweet_id_to_add_to_mempool)
     # return gif_url
     json_response_from_tweet_to_reply_to = connect_to_endpoint(create_url(tweet_id_to_reply_to))
@@ -72,8 +74,10 @@ def get_tweet_to_reply_to(tweet_id):
     print(f"the json dumps from get tweet to reply to is: \n{json.dumps(json_response_from_tweet_to_reply_to, indent=4, sort_keys=True)}")
     # print(json.dumps(json_response_from_tweet_to_stackjoinadd, indent=4, sort_keys=True))
     # print("\n\n\n")
-    # checking if bigOOFbot is mentioned in the reply to tweet
+    # checking if bigOOFbot is the tweet to reply to, or if bigoofbot is mentioned in the reply to tweet
     contains_bigoofbot_on_tweet_to_reply_to_mentions = False
+    if author_id_tweet_to_reply_to == "1602113748839317512":
+        contains_bigoofbot_on_tweet_to_reply_to_mentions = True
     if "entities" in json_response_from_tweet_to_reply_to['data'][0]:
         if "mentions" in json_response_from_tweet_to_reply_to['data'][0]['entities']:
             for item in json_response_from_tweet_to_reply_to['data'][0]['entities']['mentions']:
