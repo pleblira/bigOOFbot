@@ -90,6 +90,10 @@ def get_stream(set):
                 tweet_message = tweet_message[:len(tweet_message)-1]            
             tweet_message = "\""+tweet_message.upper()+"\""+"?!\n\n"+oof
 
+            bigoofbot_mentioned_in_tweet_message = False
+            if "@bigoofbot" in tweet_message.lower():
+                bigoofbot_mentioned_in_tweet_message == True
+
             # print(f"json dumps for get_stream: {json.dumps(json_response, indent=4, sort_keys=True)}")
             # processing tweet message
             # tweet_message = json_response["data"]["text"]
@@ -117,7 +121,7 @@ def get_stream(set):
                 # if "#stackchain" not in json_response['data']['text'].lower() and "#stackchaintip" not in json_response['data']['text'].lower() and "#stackjoin" not in json_response['data']['text'].lower() and "#pbstack" not in json_response['data']['text'].lower() and "#stackjoinadd" not in json_response['data']['text'].lower():
                 #     print("switching tweet_n to True since text doesn't contain hashtags")
                 #     tweet_n = True
-                if data_from_tweet_to_reply_to[3] == True:
+                if data_from_tweet_to_reply_to[3] == True and bigoofbot_mentioned_in_tweet_message == False:
                     print("the tweet is a reply to a tweet that previously mentioned the bot, so setting tweet_n to True")
                     tweet_n = True
                 for throttle_item in throttle_list:
